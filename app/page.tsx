@@ -3,6 +3,7 @@ import CourseCard, { Course } from "@/components/CourseCard";
 import AssignmentCard, { Assignment } from "@/components/AssignmentCard";
 import { createClient } from "@/lib/supabase/server";
 import { createCourse } from "@/app/actions/courses";
+import { createAssignment } from "@/app/actions/assignments";
 
 
 export default async function Home({
@@ -29,7 +30,7 @@ export default async function Home({
 
   const { data: assignments, error: assignmentsError } = await supabase
     .from("assignments")
-    .select("*");
+    .select("*, courses(code)");
 
   if (coursesError || assignmentsError) {
     return <p className="p-8 text-red-600">Failed to load data.</p>;
@@ -56,6 +57,25 @@ export default async function Home({
         {assignments.map((assignment) => (
           <AssignmentCard key={assignment.id} assignment={assignment} />
         ))}
+        <form action={createAssignment} className="flex flex-col gap-2 border-t pt-4">
+          <select name="course_id" required className="border rounded-lg p-2">
+            <option value="">Select a course</option>
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.code} — {course.name}
+              </option>
+            ))}
+            </select>
+            <input name="title" placeholder="Assignment title" required className="border rounded-lg p-2" />
+            <input name="due_date" type="date" className="border rounded-lg p-2" />
+            <input name="estimated_hours" type="number" step="0.5" min="0" placeholder="Estimated hours" className="border rounded-lg p-2" />
+            <select name="priority" defaultValue="medium" className="border rounded-lg p-2">
+              <option value="low">Low priority</option>
+              <option value="medium">Medium priority</option>
+              <option value="high">High priority</option>
+            </select>
+            <button className="bg-black text-white rounded-lg p-2">Add assignment</button>
+          </form>
       </section>
     </main>
   );

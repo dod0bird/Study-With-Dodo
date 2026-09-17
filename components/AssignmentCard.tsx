@@ -2,12 +2,13 @@ export type Priority = "low" | "medium" | "high";
 export type AssignmentStatus = "not_started" | "in_progress" | "done";
 
 export interface Assignment {
+  id: string;
   title: string;
-  courseCode: string;
-  dueDate: string;
-  estimatedHours: number;
+  due_date: string | null;
+  estimated_hours: number | null;
   priority: Priority;
   status: AssignmentStatus;
+  courses: { code: string } | null;
 }
 
 const priorityStyles: Record<Priority, string> = {
@@ -20,10 +21,10 @@ export default function AssignmentCard({ assignment }: { assignment: Assignment 
   return (
     <div className="border rounded-lg p-4 flex items-start justify-between gap-4">
       <div>
-        <p className="text-sm text-zinc-500">{assignment.courseCode}</p>
+        <p className="text-sm text-zinc-500">{assignment.courses?.code}</p>
         <h2 className="text-lg font-semibold">{assignment.title}</h2>
         <p className="text-sm text-zinc-600">
-          Due {assignment.dueDate} · Est. {assignment.estimatedHours}h
+          Due {assignment.due_date ?? "—"} · Est. {assignment.estimated_hours ?? "—"}h
         </p>
       </div>
       <span
