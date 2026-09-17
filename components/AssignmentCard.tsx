@@ -1,4 +1,5 @@
 import { completeAssignment } from "@/app/actions/assignments";
+import { formatMinutes } from "@/lib/format";
 
 export type Priority = "low" | "medium" | "high";
 export type AssignmentStatus = "not_started" | "in_progress" | "done";
@@ -20,7 +21,17 @@ const priorityStyles: Record<Priority, string> = {
   high: "bg-red-100 text-red-700",
 };
 
-export default function AssignmentCard({ assignment }: { assignment: Assignment }) {
+export default function AssignmentCard({
+  assignment,
+  minutesSpent,
+}: {
+  assignment: Assignment;
+  minutesSpent: number;
+}) {
+    const remainingMinutes =
+    assignment.estimated_hours != null
+        ? Math.max(0, assignment.estimated_hours * 60 - minutesSpent)
+        : null;
   return (
     <div className="border rounded-lg p-4 flex flex-col gap-2">
       <div className="flex items-start justify-between gap-4">
@@ -30,6 +41,11 @@ export default function AssignmentCard({ assignment }: { assignment: Assignment 
           <p className="text-sm text-zinc-600">
             Due {assignment.due_date ?? "—"} · Est. {assignment.estimated_hours ?? "—"}h
           </p>
+            {assignment.status !== "done" && remainingMinutes !== null && (
+            <p className="text-sm text-zinc-500">
+                Time spent so far: {formatMinutes(minutesSpent)} · Estimated Remaining: {formatMinutes(remainingMinutes)}
+            </p>
+            )}
         </div>
         <span
           className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${priorityStyles[assignment.priority]}`}
