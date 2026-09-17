@@ -2,8 +2,17 @@ import { redirect } from "next/navigation";
 import CourseCard, { Course } from "@/components/CourseCard";
 import AssignmentCard, { Assignment } from "@/components/AssignmentCard";
 import { createClient } from "@/lib/supabase/server";
+import { createCourse } from "@/app/actions/courses";
 
-export default async function Home() {
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+
+  const { error } = await searchParams;
+  
   const supabase = await createClient();
 
   const {
@@ -33,6 +42,13 @@ export default async function Home() {
         {courses.map((course) => (
           <CourseCard key={course.id} course={course} />
         ))}
+        {error && <p className="text-sm text-red-600">{error}</p>}
+          <form action={createCourse} className="flex flex-col gap-2 border-t pt-4">
+            <input name="code" placeholder="Course code (e.g. CPSC 210)" required className="border rounded-lg p-2" />
+            <input name="name" placeholder="Course name" required className="border rounded-lg p-2" />
+            <input name="description" placeholder="Description (optional)" className="border rounded-lg p-2" />
+            <button className="bg-black text-white rounded-lg p-2">Add course</button>
+          </form>
       </section>
 
       <section className="flex flex-col gap-4">
@@ -44,3 +60,4 @@ export default async function Home() {
     </main>
   );
 }
+
