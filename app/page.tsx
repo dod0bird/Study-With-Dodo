@@ -91,18 +91,9 @@ export default async function Home({
         {studySessions.map((session) => (
           <StudySessionCard key={session.id} session={session} />
         ))}
-        <section className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold">Study Sessions</h1>
-          {studySessions.map((session) => (
-            <StudySessionCard key={session.id} session={session} />
-          ))}
 
-          <StudyTimer courses={courses} />
+        <StudyTimer courses={courses} />
 
-          <form action={createStudySession} className="flex flex-col gap-2 border-t pt-4">
-            {/* ...unchanged, your existing manual-entry form... */}
-          </form>
-        </section>
         <form action={createStudySession} className="flex flex-col gap-2 border-t pt-4">
           <select name="course_id" required className="border rounded-lg p-2">
             <option value="">Select a course</option>
