@@ -44,3 +44,33 @@ export async function createAssignment(formData: FormData) {
   revalidatePath("/");
   redirect("/");
 }
+
+export async function completeAssignment(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const id = formData.get("id") as string;
+  const actualHours = formData.get("actual_hours");
+
+  const { error } = await supabase
+    .from("assignments")
+    .update({
+      status: "done",
+      completed_at: new Date().toISOString(),
+      actual_hours: actualHours ? Number(actualHours) : null,
+    })
+    .eq("id", id);
+
+  if (error) {
+    redirect(`/?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+}
