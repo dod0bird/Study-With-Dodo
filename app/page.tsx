@@ -1,8 +1,19 @@
+import { redirect } from "next/navigation";
 import CourseCard, { Course } from "@/components/CourseCard";
 import AssignmentCard, { Assignment } from "@/components/AssignmentCard";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const { data: courses, error: coursesError } = await supabase
     .from("courses")
     .select("*");
