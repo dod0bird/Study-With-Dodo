@@ -42,6 +42,9 @@ export default function StudyTimer({ courses }: { courses: Course[] }) {
 
     const formData = new FormData();
     formData.set("course_id", courseId);
+    formData.set("assignment_id", "");
+    formData.set("focus_rating", "");
+    formData.set("notes", "");
     formData.set("start_at", startTime.toISOString());
     formData.set("duration_minutes", String(durationMinutes));
 

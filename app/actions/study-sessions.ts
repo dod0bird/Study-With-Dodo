@@ -22,6 +22,7 @@ export async function createStudySession(formData: FormData) {
     duration_minutes: formData.get("duration_minutes"),
     focus_rating: formData.get("focus_rating"),
     notes: formData.get("notes"),
+    assignment_id: formData.get("assignment_id"),
   });
 
   if (!parsed.success) {
@@ -32,9 +33,10 @@ export async function createStudySession(formData: FormData) {
     course_id: parsed.data.course_id,
     start_at: new Date(parsed.data.start_at).toISOString(),
     duration_minutes: parsed.data.duration_minutes,
-    focus_rating: parsed.data.focus_rating ?? null,
+    focus_rating: parsed.data.focus_rating || null,
     notes: parsed.data.notes || null,
     user_id: user.id,
+    assignment_id: parsed.data.assignment_id || null,
   });
 
   if (error) {
