@@ -42,5 +42,4 @@ export async function createStudySession(formData: FormData) {
   }
 
   revalidatePath("/");
-  redirect("/");
 }
