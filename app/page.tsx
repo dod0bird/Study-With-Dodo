@@ -35,7 +35,8 @@ export default async function Home({
 
   const { data: assignments, error: assignmentsError } = await supabase
     .from("assignments")
-    .select("*, courses(code)");
+    .select("*, courses!inner(code, archived)")
+    .eq("courses.archived", false);
 
   const { data: studySessions, error: sessionsError } = await supabase
     .from("study_sessions")
