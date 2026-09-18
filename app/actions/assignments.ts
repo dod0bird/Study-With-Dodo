@@ -73,4 +73,5 @@ export async function completeAssignment(formData: FormData) {
   }
 
   revalidatePath("/");
+  redirect("/");
 }

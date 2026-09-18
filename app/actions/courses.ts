@@ -78,6 +78,7 @@ export async function updateCourse(formData: FormData) {
   }
 
   revalidatePath("/");
+  redirect("/");
 }
 
 export async function archiveCourse(formData: FormData) {
@@ -97,10 +98,12 @@ export async function archiveCourse(formData: FormData) {
     .from("courses")
     .update({ archived: true })
     .eq("id", id);
+    
 
   if (error) {
     redirect(`/?error=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/");
+  redirect("/");
 }

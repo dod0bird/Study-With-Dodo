@@ -5,6 +5,7 @@ export interface StudySession {
   focus_rating: number | null;
   notes: string | null;
   courses: { code: string } | null;
+  assignments: { title: string } | null;
 }
 
 export default function StudySessionCard({ session }: { session: StudySession }) {
@@ -12,7 +13,10 @@ export default function StudySessionCard({ session }: { session: StudySession })
 
   return (
     <div className="border rounded-lg p-4">
-      <p className="text-sm text-zinc-500">{session.courses?.code}</p>
+      <p className="text-sm text-zinc-500">
+        {session.courses?.code}
+        {session.assignments?.title ? ` · ${session.assignments.title}` : ""}
+      </p>
       <h2 className="text-lg font-semibold">
         {start.toLocaleDateString()} · {start.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
       </h2>
