@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import AssignmentCard from "@/components/AssignmentCard";
 import { createAssignment } from "@/app/actions/assignments";
+import SubmitButton from "@/components/SubmitButton";
 
 export default async function AssignmentsPage({
   searchParams,
@@ -66,7 +67,7 @@ export default async function AssignmentsPage({
           <option value="medium">Medium priority</option>
           <option value="high">High priority</option>
         </select>
-        <button className="bg-black text-white rounded-lg p-2">Add assignment</button>
+        <SubmitButton className="bg-black text-white rounded-lg p-2">Add assignment</SubmitButton>
       </form>
     </main>
   );

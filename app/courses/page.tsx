@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import CourseCard from "@/components/CourseCard";
 import { createCourse } from "@/app/actions/courses";
+import SubmitButton from "@/components/SubmitButton";
 
 export default async function CoursesPage({
   searchParams,
@@ -30,7 +31,7 @@ export default async function CoursesPage({
         <input name="code" placeholder="Course code (e.g. CPSC 210)" required className="border rounded-lg p-2" />
         <input name="name" placeholder="Course name" required className="border rounded-lg p-2" />
         <input name="description" placeholder="Description (optional)" className="border rounded-lg p-2" />
-        <button className="bg-black text-white rounded-lg p-2">Add course</button>
+        <SubmitButton className="bg-black text-white rounded-lg p-2">Add course</SubmitButton>
       </form>
     </main>
   );

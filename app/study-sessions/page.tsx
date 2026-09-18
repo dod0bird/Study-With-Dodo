@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import StudySessionCard from "@/components/StudySessionCard";
 import StudyTimer from "@/components/StudyTimer";
 import { createStudySession } from "@/app/actions/study-sessions";
+import SubmitButton from "@/components/SubmitButton";
 
 export default async function StudySessionsPage({
   searchParams,
@@ -71,7 +72,7 @@ export default async function StudySessionsPage({
           <option value="5">5 — Fully focused</option>
         </select>
         <input name="notes" placeholder="Notes (optional)" className="border rounded-lg p-2" />
-        <button className="bg-black text-white rounded-lg p-2">Log study session</button>
+        <SubmitButton className="bg-black text-white rounded-lg p-2">Log study session</SubmitButton>
       </form>
     </main>
   );
