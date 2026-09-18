@@ -7,6 +7,7 @@ import { createAssignment } from "@/app/actions/assignments";
 import StudySessionCard, { StudySession } from "@/components/StudySessionCard";
 import { createStudySession } from "@/app/actions/study-sessions";
 import StudyTimer from "@/components/StudyTimer";
+import { formatMinutes } from "@/lib/format";
 
 
 export default async function Home({
@@ -29,7 +30,8 @@ export default async function Home({
 
   const { data: courses, error: coursesError } = await supabase
     .from("courses")
-    .select("*");
+    .select("*")
+    .eq("archived", false);
 
   const { data: assignments, error: assignmentsError } = await supabase
     .from("assignments")
@@ -37,15 +39,57 @@ export default async function Home({
 
   const { data: studySessions, error: sessionsError } = await supabase
     .from("study_sessions")
-    .select("*, courses(code)")
+    .select("*, courses(code), assignments(title)")
     .order("start_at", { ascending: false });
 
   if (coursesError || assignmentsError || sessionsError) {
     return <p className="p-8 text-red-600">Failed to load data.</p>;
   }
 
+  const minutesSpentByAssignment = new Map<string, number>();
+    for (const session of studySessions) {
+      if (session.assignment_id) {
+        minutesSpentByAssignment.set(
+          session.assignment_id,
+          (minutesSpentByAssignment.get(session.assignment_id) ?? 0) + session.duration_minutes
+        );
+      }
+  }
+
+  const notDoneAssignments = assignments.filter((a) => a.status !== "done");
+  const doneAssignments = assignments.filter((a) => a.status === "done");
+
+  const totalEstimatedHours = notDoneAssignments.reduce(
+    (sum, a) => sum + (a.estimated_hours ?? 0),
+    0
+  );
+
+  const totalStudyMinutes = studySessions.reduce(
+    (sum, s) => sum + s.duration_minutes,
+    0
+  );
+  
+
   return (
     <main className="p-8 max-w-2xl mx-auto flex flex-col gap-8">
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="border rounded-lg p-4">
+          <p className="text-xs text-zinc-500">Upcoming assignments</p>
+          <p className="text-2xl font-bold">{notDoneAssignments.length}</p>
+        </div>
+        <div className="border rounded-lg p-4">
+          <p className="text-xs text-zinc-500">Estimated hours remaining</p>
+          <p className="text-2xl font-bold">{totalEstimatedHours.toFixed(1)}h</p>
+        </div>
+        <div className="border rounded-lg p-4">
+          <p className="text-xs text-zinc-500">Completed assignments</p>
+          <p className="text-2xl font-bold">{doneAssignments.length}</p>
+        </div>
+        <div className="border rounded-lg p-4">
+          <p className="text-xs text-zinc-500">Total time studied</p>
+          <p className="text-2xl font-bold">{formatMinutes(totalStudyMinutes)}</p>
+        </div>
+      </section>
       <section className="flex flex-col gap-4">
         <h1 className="text-2xl font-bold">My Courses</h1>
         {courses.map((course) => (
@@ -62,9 +106,13 @@ export default async function Home({
 
       <section className="flex flex-col gap-4">
         <h1 className="text-2xl font-bold">Assignments</h1>
-        {assignments.map((assignment) => (
-          <AssignmentCard key={assignment.id} assignment={assignment} />
-        ))}
+          {assignments.map((assignment) => (
+            <AssignmentCard
+              key={assignment.id}
+              assignment={assignment}
+              minutesSpent={minutesSpentByAssignment.get(assignment.id) ?? 0}
+            />
+          ))}
         <form action={createAssignment} className="flex flex-col gap-2 border-t pt-4">
         <select name="course_id" required className="border rounded-lg p-2">
           <option value="">Select a course</option>
@@ -92,7 +140,10 @@ export default async function Home({
           <StudySessionCard key={session.id} session={session} />
         ))}
 
-        <StudyTimer courses={courses} />
+        <StudyTimer
+          courses={courses}
+          assignments={assignments.map((a) => ({ id: a.id, title: a.title, course_id: a.course_id }))}
+        />
 
         <form action={createStudySession} className="flex flex-col gap-2 border-t pt-4">
           <select name="course_id" required className="border rounded-lg p-2">
@@ -100,6 +151,14 @@ export default async function Home({
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
                 {course.code} — {course.name}
+              </option>
+            ))}
+          </select>
+          <select name="assignment_id" defaultValue="" className="border rounded-lg p-2">
+            <option value="">No specific assignment (general studying)</option>
+            {assignments.map((assignment) => (
+              <option key={assignment.id} value={assignment.id}>
+                {assignment.title}
               </option>
             ))}
           </select>
