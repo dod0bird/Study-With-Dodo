@@ -3,11 +3,17 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function login(formData: FormData) {
+  const email = formData.get("email") as string;
+
+  if (!checkRateLimit(email)) {
+    redirect(`/login?error=${encodeURIComponent("Too many login attempts. Please wait a minute and try again.")}`);
+  }
+  
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
