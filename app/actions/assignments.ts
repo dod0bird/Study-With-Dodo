@@ -25,7 +25,7 @@ export async function createAssignment(formData: FormData) {
   });
 
   if (!parsed.success) {
-    redirect(`/?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
+    redirect(`/assignments?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
   }
 
   const { error } = await supabase.from("assignments").insert({
@@ -38,11 +38,11 @@ export async function createAssignment(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/?error=${encodeURIComponent(error.message)}`);
+    redirect(`/assignments?error=${encodeURIComponent(error.message)}`);
   }
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/assignments");
+  redirect("/assignments");
 }
 
 export async function completeAssignment(formData: FormData) {
@@ -69,9 +69,9 @@ export async function completeAssignment(formData: FormData) {
     .eq("id", id);
 
   if (error) {
-    redirect(`/?error=${encodeURIComponent(error.message)}`);
+    redirect(`/assignments?error=${encodeURIComponent(error.message)}`);
   }
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/assignments");
+  redirect("/assignments");
 }

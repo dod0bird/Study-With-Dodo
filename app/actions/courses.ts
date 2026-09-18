@@ -23,7 +23,7 @@ export async function createCourse(formData: FormData) {
   });
 
   if (!parsed.success) {
-    redirect(`/?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
+    redirect(`/courses?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
   }
 
   const { error } = await supabase.from("courses").insert({
@@ -34,11 +34,11 @@ export async function createCourse(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/?error=${encodeURIComponent(error.message)}`);
+    redirect(`/courses?error=${encodeURIComponent(error.message)}`);
   }
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/courses");
+  redirect("/courses");
 }
 
 export async function updateCourse(formData: FormData) {
@@ -61,7 +61,7 @@ export async function updateCourse(formData: FormData) {
   });
 
   if (!parsed.success) {
-    redirect(`/?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
+    redirect(`/courses?error=${encodeURIComponent(parsed.error.issues[0].message)}`);
   }
 
   const { error } = await supabase
@@ -74,11 +74,11 @@ export async function updateCourse(formData: FormData) {
     .eq("id", id);
 
   if (error) {
-    redirect(`/?error=${encodeURIComponent(error.message)}`);
+    redirect(`/courses?error=${encodeURIComponent(error.message)}`);
   }
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/courses");
+  redirect("/courses");
 }
 
 export async function archiveCourse(formData: FormData) {
@@ -98,12 +98,11 @@ export async function archiveCourse(formData: FormData) {
     .from("courses")
     .update({ archived: true })
     .eq("id", id);
-    
 
   if (error) {
-    redirect(`/?error=${encodeURIComponent(error.message)}`);
+    redirect(`/courses?error=${encodeURIComponent(error.message)}`);
   }
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/courses");
+  redirect("/courses");
 }
